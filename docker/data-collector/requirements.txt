@@ -1,0 +1,6 @@
+requests
+influxdb
+schedule
+pyyaml
+ccxt
+python-bitcoinrpc

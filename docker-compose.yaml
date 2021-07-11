@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+
+  bitcoind:
+    build: ./docker/bitcoind
+    ports:
+      - "127.0.0.1:8333:8333"
+      - "127.0.0.1:8332:8332"
+    volumes:
+      - /data/bitcoin:/bitcoin/.bitcoin
+
+
+  data-collector:
+    build: ./docker/data-collector
+    restart: always
+    volumes:
+      - ./data:/data
+    depends_on:
+      - grafana
+
+
+  influxdb:
+    image: influxdb:1.7.11
+    ports:
+      - "127.0.0.1:8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=bots
+      - INFLUXDB_HTTP_LOG_ENABLED=false
+      - INFLUXDB_DATA_QUERY_LOG_ENABLED=false
+
+  grafana:
+    build: docker/grafana
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./docker/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./docker/grafana/plugins:/var/lib/grafana/plugins
+    depends_on:
+      - influxdb
+
+volumes:
+  influxdb-data:
