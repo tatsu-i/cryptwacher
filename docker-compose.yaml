@@ -10,6 +10,13 @@ services:
     volumes:
       - /data/bitcoin:/bitcoin/.bitcoin
 
+  geth:
+    image: ethereum/client-go:latest
+    ports:
+      - "127.0.0.1:8545:8545"
+      - "30303:30303"
+    volumes:
+      - /data/ethereum:/root
 
   data-collector:
     build: ./docker/data-collector
